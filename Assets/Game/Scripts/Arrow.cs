@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using MoreMountains.NiceVibrations;
 
 public class Arrow : InGameObject
 {
@@ -35,7 +36,7 @@ public class Arrow : InGameObject
         if ((tf.position.x > 0f || tf.position.x < 0f) && !m_Change)
         {
             m_Change = true;
-            float move = m_AxisX / 3f;
+            float move = 0f;
             tf.DOKill();
             tf.DOLocalMoveX(move, 0.1f);
         }
@@ -67,8 +68,9 @@ public class Arrow : InGameObject
     {
         if (other.tag.Equals("Enemy"))
         {
+            MMVibrationManager.Haptic(HapticTypes.HeavyImpact);
+
             other.enabled = false;
-            Debug.Log("Enemyyyyyyyyyyyyyyyyyyyyy");
 
             Claim claim = other.GetComponent<Claim>();
 
@@ -90,8 +92,9 @@ public class Arrow : InGameObject
         }
         else if (other.tag.Equals("Claim"))
         {
+            MMVibrationManager.Haptic(HapticTypes.HeavyImpact);
+
             other.enabled = false;
-            Debug.Log("Claimmmmmmmmmmmmmmmmmmmmmmmmm");
 
             Claim claim = other.GetComponent<Claim>();
 
@@ -99,8 +102,29 @@ public class Arrow : InGameObject
             {
                 ArrowManager.Instance.m_TotalArrow *= claim.m_OperatorValue;
             }
+            else if (claim.m_ClaimOperator == ClaimOperator.ADD)
+            {
+                ArrowManager.Instance.m_TotalArrow += claim.m_OperatorValue;
+            }
+            else if (claim.m_ClaimOperator == ClaimOperator.SUBTRACT)
+            {
+                ArrowManager.Instance.m_TotalArrow -= claim.m_OperatorValue;
+                if (ArrowManager.Instance.m_TotalArrow <= 0)
+                {
+                    ArrowManager.Instance.m_TotalArrow = 2;
+                }
+            }
+            else if (claim.m_ClaimOperator == ClaimOperator.DIVIDE)
+            {
+                ArrowManager.Instance.m_TotalArrow /= claim.m_OperatorValue;
+                if (ArrowManager.Instance.m_TotalArrow <= 0)
+                {
+                    ArrowManager.Instance.m_TotalArrow = 2;
+                }
+            }
 
             int result = ArrowManager.Instance.m_TotalArrow / 3;
+            ArrowManager.Instance.txt_ArrowNo.text = ArrowManager.Instance.m_TotalArrow.ToString();
 
             for (int i = 0; i < ArrowManager.Instance.m_Arrows.Count; i++)
             {
@@ -116,7 +140,6 @@ public class Arrow : InGameObject
         }
         else if (other.tag.Equals("Ending"))
         {
-            Debug.Log("Thao oi!!!!!!!!!!!!!");
             other.enabled = false;
             UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("PlayScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
         }

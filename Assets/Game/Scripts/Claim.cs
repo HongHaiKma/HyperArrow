@@ -15,6 +15,18 @@ public class Claim : MonoBehaviour
         {
             txt_OperatorValue.text = "X" + m_OperatorValue;
         }
+        else if (m_ClaimOperator == ClaimOperator.ADD)
+        {
+            txt_OperatorValue.text = "+" + m_OperatorValue;
+        }
+        else if (m_ClaimOperator == ClaimOperator.SUBTRACT)
+        {
+            txt_OperatorValue.text = "-" + m_OperatorValue;
+        }
+        else if (m_ClaimOperator == ClaimOperator.DIVIDE)
+        {
+            txt_OperatorValue.text = "%" + m_OperatorValue;
+        }
     }
 }
 
